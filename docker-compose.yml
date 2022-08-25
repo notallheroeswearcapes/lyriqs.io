@@ -1,0 +1,10 @@
+version: '1.0'
+services:
+  lyriqs-server:
+    build: ./node
+    ports:
+      - "3000:3000"
+  lyriqs-client:
+    build: ./dist
+    ports:
+    - "8080:80"
