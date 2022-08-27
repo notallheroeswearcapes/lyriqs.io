@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LyriqsService } from './lyriqs.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'lyriqs-client';
+
+  result = "";
+
+  constructor(private lyriqsService: LyriqsService) { }
+
+  getTest() {
+    console.log("Button click event received successfully.")
+    this.lyriqsService.getTest().subscribe(res => {
+      this.result = res;
+    });
+    console.log(this.result);
+  }
 }
