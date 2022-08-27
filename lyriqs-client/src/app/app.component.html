@@ -8,11 +8,27 @@
 </head>
 
 <body>
-  <h1 class="text-3xl font-bold underline">
-    Hello world!
-  </h1>
-  <mat-divider></mat-divider>
-  <button mat-raised-button color="primary" (click)="getTest()">Get test</button>
+  <mat-toolbar color="primary">
+    <img src="/assets/lyriqs_white_trp_lndscp.png" style="max-width:85%; max-height:85%">
+    <span class="spacer"></span>
+    <span>Counter: {{counter}}</span>
+  </mat-toolbar>
+
+  <div class="song-search-parent">
+    <mat-form-field class="song-search-field" appearance="fill">
+      <mat-label>Song search</mat-label>
+      <input matInput type="text" [(ngModel)]="value">
+      <button *ngIf="value" matSuffix mat-icon-button aria-label="Clear" (click)="value=''">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <div class="song-search-button">
+      <button mat-raised-button color="primary" class="align-middle" (click)="getTest()">Search</button>
+    </div>
+  </div>
+
+  <br>
+
   <p>{{result}}</p>
 </body>
 

@@ -9,7 +9,11 @@ TODO
 TODO
 
 ## How to use
-Run the command `npm start serve`. You can also start up the docker container provided in this repository via `docker... TODO`.
+Run the command `npm start serve`. You can also create a Docker image and start up a container with the following commands: 
+```
+docker build -t meder96/lyriqs-server .
+docker run -p 8000:3000 meder96/lyriqs-server
+```
 
 ## Author
 

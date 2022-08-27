@@ -9,7 +9,9 @@ import { LyriqsService } from './lyriqs.service';
 export class AppComponent {
   title = 'lyriqs-client';
 
+  value = "";
   result = "";
+  counter = 0;
 
   constructor(private lyriqsService: LyriqsService) { }
 
@@ -19,5 +21,6 @@ export class AppComponent {
       this.result = res;
     });
     console.log(this.result);
+    this.counter++;
   }
 }

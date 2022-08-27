@@ -1,0 +1,26 @@
+.song-search-field {
+    width: 40%;
+    vertical-align: middle;
+}
+
+.song-search-parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    margin: 20px;
+
+}
+
+.song-search-button {
+    margin-left: 20px;
+    vertical-align: middle;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+::ng-deep .mat-form-field-wrapper {
+    margin-bottom: -1.25em;
+}
