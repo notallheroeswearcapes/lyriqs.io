@@ -14,6 +14,8 @@ Run the command `npm start serve`. You can also create a Docker image and start 
 docker build -t meder96/lyriqs-server .
 docker run -p 8000:3000 meder96/lyriqs-server
 ```
+The server application will then be available at `http://localhost:8000/`.
+
 
 ## Author
 

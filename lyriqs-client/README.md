@@ -19,7 +19,12 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
-You can also start up the docker container provided in this repository via `docker... TODO`.
+You can also create a Docker image and start up a container with the following commands: 
+```
+docker build -t meder96/lyriqs-client .
+docker run -p 8080:80 meder96/lyriqs-client
+```
+The client application will then be available at `http://localhost:8080/`.
 
 ## Author
 

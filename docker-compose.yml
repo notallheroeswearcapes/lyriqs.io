@@ -3,8 +3,8 @@ services:
   lyriqs-server:
     build: ./node
     ports:
-      - "8000:30"
+      - "8000:3000"
   lyriqs-client:
     build: ./dist
     ports:
-    - "8080:80"
+      - "8080:4200"

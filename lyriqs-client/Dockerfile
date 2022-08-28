@@ -1,7 +1,12 @@
-FROM node:latest
-WORKDIR /lyriqs-client
-COPY . .
+# Stage 1: Build
+FROM node:latest as build
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
 RUN npm install
-RUN npm run build --prod#stage 2
-FROM nginx:alpine
-COPY --from=node /client/dist/demo-app /usr/share/nginx/html
+COPY . .
+RUN npm run build --prod
+
+# Stage 2: Run
+FROM nginx:latest
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /usr/src/app/dist/lyriqs-client /usr/share/nginx/html
