@@ -22,7 +22,7 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 You can also create a Docker image and start up a container with the following commands: 
 ```
 docker build -t meder96/lyriqs-client .
-docker run -p 8080:80 meder96/lyriqs-client
+docker run -p 4200:80 meder96/lyriqs-client
 ```
 The client application will then be available at `http://localhost:8080/`.
 

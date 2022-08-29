@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:16-alpine
 
 # Set the work directory to app folder. 
 # We will be copying our code here

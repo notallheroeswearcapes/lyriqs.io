@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
-import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -13,6 +12,8 @@ export class LyriqsService {
   rootUrl = '/api';
 
   getTest(): Observable<string> {
-    return this.http.get(this.rootUrl, { responseType: 'text'});
+    let req = this.http.get(this.rootUrl, { responseType: 'text'});
+    req.subscribe(data => {console.log(data)});
+    return req;
   }
 }
