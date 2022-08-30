@@ -17,8 +17,52 @@
     vertical-align: middle;
 }
 
+.song-res {
+    padding: 20px;
+    overflow: hidden;
+}
+
+.song-res-table-container {
+    width: 59%;
+    float: left;
+}
+
+.song-res-table-info-container {
+    margin: auto;
+    margin-top: 20px;
+    display:flex;
+    align-items:center;
+    vertical-align:middle;
+}
+
+.song-res-table-info {
+    display: inline-block;
+    font-size: small;
+}
+
+.song-res-table {
+    width: 100%;
+}
+
+.song-res-table-isclicked {
+    font-weight: bold;
+}
+
+.song-lyrics {
+    width: 39%;
+    float: right;
+}
+
+.lyrics-plain {
+    white-space: pre-wrap;
+}
+
 .spacer {
     flex: 1 1 auto;
+}
+
+.spacer-small {
+    width: 10px;
 }
 
 ::ng-deep .mat-form-field-wrapper {

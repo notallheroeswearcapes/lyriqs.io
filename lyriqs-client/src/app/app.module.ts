@@ -11,6 +11,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
 
 import { HttpClientModule } from '@angular/common/http';
 
@@ -29,7 +31,9 @@ import { HttpClientModule } from '@angular/common/http';
     MatToolbarModule,
     MatFormFieldModule,
     MatIconModule,
-    MatInputModule
+    MatInputModule,
+    MatTableModule,
+    MatCardModule
   ],
   exports: [
     MatIconModule

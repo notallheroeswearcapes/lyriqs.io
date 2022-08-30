@@ -9,7 +9,7 @@ TODO
 TODO
 
 ## How to use
-Run the command `npm start serve`. You can also create a Docker image and start up a container with the following commands: 
+Run the command `npm run start:dev` to start up a development server which will run at port 3000. You can also create a Docker image and start up a container with the following commands: 
 ```
 docker build -t meder96/lyriqs-server .
 docker run -p 8000:3000 meder96/lyriqs-server

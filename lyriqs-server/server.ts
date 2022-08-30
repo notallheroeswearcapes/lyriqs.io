@@ -1,19 +1,21 @@
-import express, { Express, Request, Response } from 'express';
+import express from 'express';
+import cors from 'cors';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
+import musixmatchRouter from './routes/musixmatch';
 const port = process.env.PORT;
 
-const response = {
-    msg: "Backend working fine."
-}
+app.use(cors());
 
-app.get('/api', (req: Request, res: Response) => {
+app.get('/api', (req, res) => {
     console.log("Request received.")
     res.send("hallo");
 });
+
+app.use('/songs?', musixmatchRouter);
 
 app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
