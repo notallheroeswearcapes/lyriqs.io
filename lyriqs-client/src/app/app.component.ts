@@ -1,13 +1,8 @@
 import { Component } from '@angular/core';
-import { map } from 'rxjs';
+import { Lyrics } from './models/lyrics.interface';
 import { LyriqsService } from './lyriqs.service';
-import { Song } from './song';
-
-const TEST_SONG_DATA = [
-  { id: "1", title: "A Rush Of Blood To The Head", artist: "Coldplay", album: "A Rush Of Blood To The Head" },
-  { id: "2", title: "Exit Sign", artist: "Hilltop Hoods", album: "The Great Expanse" },
-  { id: "3", title: "in the wake of your leave", artist: "Gang of Youths", album: "angel in realtime." }
-]
+import { Song } from './models/song.interface';
+import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 
 @Component({
   selector: 'app-root',
@@ -15,15 +10,20 @@ const TEST_SONG_DATA = [
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'lyriqs-client';
-
   displayedColumns: string[] = ['title', 'artist', 'album'];
+  labels = ["Positive", "Negative"]
   query = "";
   result = ""
   songResults: Song[] = [];
   chosenSong: Song | undefined;
-  songLyrics = "";
+  songLyrics: Lyrics | undefined;
   counter = 0;
+  posCol = "#5E8C69"
+  negCol = "#D76865"
+  neuCol = "#EDCD9A"
+  sentimentChipLabel = ""
+  sentimentChipIcon = ''
+  sentimentChipColor = ""
 
   constructor(private lyriqsService: LyriqsService) { }
 
@@ -37,7 +37,8 @@ export class AppComponent {
   }
 
   searchForSongs() {
-    //this.songResult = TEST_SONG_DATA;
+    this.songResults = [];
+    this.songLyrics = undefined;
     this.lyriqsService.searchForSongByQuery(this.query).subscribe(res => {
       const parsedSongs = JSON.parse(res);
       Object.keys(parsedSongs).forEach(property => {
@@ -55,11 +56,93 @@ export class AppComponent {
 
   fetchSongLyrics(song: Song) {
     this.chosenSong = song;
-    this.lyriqsService.fetchSongLyricsById(song.id).subscribe(data => {
-      console.log(data);
+    this.lyriqsService.fetchAndAnalyzeSongLyricsById(song.id).subscribe(res => {
+      console.log(res);
+      this.songLyrics = res;
+      this.drawSentimentChart(res);
+      this.setLyricsLabelIcon(res);
     });
-    this.songLyrics = "Now and then I think of when we were together\r\n...Like when you said you felt so happy you could die"
   }
 
+  drawSentimentChart(lyrics: Lyrics) {
+    const sentimentData: ChartData = {
+      labels: this.labels,
+      datasets: [{
+        label: `${this.chosenSong?.title}`,
+        data: [+lyrics.sentiment.positive.toPrecision(3), +lyrics.sentiment.negative.toPrecision(3)],
+        backgroundColor: [
+          this.posCol,
+          this.negCol
+        ]
+      }]
+    };
 
+    const neutralData: ChartData = {
+      labels: ["Positive", "Negative", "Neutral"],
+      datasets: [{
+        label: '',
+        data: [
+          +lyrics.sentiment.positive.toPrecision(3),
+          +lyrics.sentiment.negative.toPrecision(3),
+          +lyrics.sentiment.neutral.toPrecision(3)
+        ],
+        backgroundColor: [
+          this.posCol,
+          this.negCol,
+          this.neuCol
+        ]
+      }]
+    };
+
+    const sentimentConfig: ChartConfiguration = {
+      type: 'doughnut',
+      data: sentimentData,
+      options: {}
+    };
+
+    const neutralTickOptions: Chart.NestedTickOptions = {
+      beginAtZero: true,
+      max: 1.0
+    };
+    const yAxes: Chart.ChartYAxe = {
+      ticks: neutralTickOptions
+    };
+    const neutralConfig: ChartConfiguration = {
+      type: 'bar',
+      data: neutralData,
+      options: {
+        scales: {
+          yAxes: [yAxes]
+        },
+        legend: {
+          display: false
+        },
+      }
+    };
+
+    const sentimentChart = new Chart(
+      'sentimentChart',
+      sentimentConfig
+    );
+    const neutralChart = new Chart(
+      'neutralChart',
+      neutralConfig
+    );
+  }
+
+  setLyricsLabelIcon(lyrics: Lyrics) {
+    if (lyrics.sentiment.label == 'pos') {
+      this.sentimentChipLabel = "Positive sentiment";
+      this.sentimentChipIcon = 'sentiment_satisfied';
+      this.sentimentChipColor = this.posCol;
+    } else if (lyrics.sentiment.label == 'neutral') {
+      this.sentimentChipLabel = "Neutral sentiment";
+      this.sentimentChipIcon = 'sentiment_neutral';
+      this.sentimentChipColor = this.neuCol;
+    } else if (lyrics.sentiment.label == 'neg') {
+      this.sentimentChipLabel = "Negative sentiment";
+      this.sentimentChipIcon = 'sentiment_dissatisfied';
+      this.sentimentChipColor = this.negCol;
+    }
+  }
 }

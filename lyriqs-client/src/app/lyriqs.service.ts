@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http'
-import { map, Observable } from 'rxjs';
-import { Song } from './song';
+import { Observable } from 'rxjs';
+import { Lyrics } from './models/lyrics.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +12,7 @@ export class LyriqsService {
 
   rootUrl = '/api';
   songsUrl = '/songs/search'
+  lyricsUrl = '/songs/lyrics'
 
   getTest(): Observable<string> {
     return this.http.get(this.rootUrl, { responseType: 'text' });
@@ -22,7 +23,8 @@ export class LyriqsService {
     return this.http.get(this.songsUrl, { responseType: 'text', params });
   }
 
-  fetchSongLyricsById(id: number): Observable<string> {
-    return this.http.get<string>(this.rootUrl);
+  fetchAndAnalyzeSongLyricsById(id: number): Observable<Lyrics> {
+    let params = new HttpParams().set("id", id);
+    return this.http.get<Lyrics>(this.lyricsUrl, { responseType: 'json', params });
   }
 }

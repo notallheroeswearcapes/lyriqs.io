@@ -17,20 +17,16 @@
   <div class="song-search-parent">
     <mat-form-field class="song-search-field" appearance="fill">
       <mat-label>Song search</mat-label>
-      <input matInput type="text" [(ngModel)]="query">
+      <input matInput autofocus type="text" [(ngModel)]="query" (keyup.enter)="searchForSongs()">
       <button *ngIf="query" matSuffix mat-icon-button aria-label="Clear" (click)="query=''">
         <mat-icon>close</mat-icon>
       </button>
     </mat-form-field>
     <div class="song-search-button">
-      <button mat-raised-button color="primary" class="align-middle" (click)="searchForSongs()"
+      <button mat-raised-button id="searchBtn" color="primary" class="align-middle" (click)="searchForSongs()"
         [disabled]="query==''">Search</button>
     </div>
   </div>
-
-  <br>
-
-  <p>{{result}}</p>
 
   <div class="song-res" *ngIf="songResults.length > 0">
     <div class="song-res-table-container">
@@ -71,16 +67,42 @@
       </div>
     </div>
 
-    <div class="song-lyrics mat-elevation-z4" *ngIf="songLyrics != ''">
+    <div class="song-lyrics mat-elevation-z4" [hidden]="!songLyrics">
       <mat-card>
         <mat-card-header>
           <mat-card-title>{{chosenSong?.title}}</mat-card-title>
           <mat-card-subtitle>{{chosenSong?.artist}}</mat-card-subtitle>
+          <span class="spacer"></span>
+          <mat-chip-list>
+            <mat-chip [ngStyle]="{'background-color': (songLyrics?.sentiment?.label == 'pos') ? posCol : (songLyrics?.sentiment?.label == 'neg') ? negCol : neuCol}">
+              <mat-icon>{{sentimentChipIcon}}</mat-icon>
+              <span class="spacer-small"></span>
+              {{sentimentChipLabel}}
+            </mat-chip>
+          </mat-chip-list>
         </mat-card-header>
         <mat-card-content inset>
-          <div class="lyrics-plain">{{songLyrics}}</div>
+          <div class="lyrics-plain">{{songLyrics?.content}}</div>
         </mat-card-content>
         <mat-divider inset></mat-divider>
+        <div class="sentimentChartContainer">
+          <span class="sentChartHeader font-semibold">Sentiment Charts</span>
+          <canvas id="sentimentChart"></canvas>
+          <canvas id="neutralChart"></canvas>
+        </div>
+        <div class="song-res-table-info-container">
+          <div class="song-res-table-info">
+            <mat-icon>info</mat-icon>
+          </div>
+          <span class="spacer-small"></span>
+          <div class="song-res-table-info">
+            Positive and negative sentiments will add up to 1, while neutral is standalone. If neutral is greater than 0.5 then the label will be neutral. Otherwise, the label will be positive or negative, whichever has the greater probability.
+          </div>
+        </div>
+        <mat-divider inset></mat-divider>
+        <div class="sentimentChartContainer">
+          <span class="sentChartHeader font-semibold">Lyrics Word Cloud</span>
+        </div>
       </mat-card>
     </div>
   </div>
