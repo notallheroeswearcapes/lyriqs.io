@@ -18,6 +18,10 @@ const sentiment = {
     host: "text-processing.com/api"
 }
 
+const wordcloud = {
+    host: "quickchart.io"
+}
+
 router.get('/search', (req, res) => {
     console.log("Received request to /songs/search.");
     const query = req.query['song'];
@@ -35,6 +39,7 @@ router.get('/search', (req, res) => {
 
 router.get('/lyrics', (req, res) => {
     const id = req.query['id']!;
+    const commontrack_id = req.query['commontrack_id'];
     const options = createLyricsOptions(id);
     const url = `http://${musixmatch.host}${options.path}`;
 
@@ -42,40 +47,34 @@ router.get('/lyrics', (req, res) => {
         .then(rsp => {
             const lyricsRes = rsp.data.message.body.lyrics;
             const lyrics = cleanLyrics(lyricsRes.lyrics_body);
-            const sentimentFormData = new FormData();
-            sentimentFormData.append('text', lyrics);
+            const cleanedLyrics = cleanupLineBreaks(lyrics);
 
-            const sentimentCall = setupSentimentCall(lyrics);
-            axios({
-                method: 'post',
-                url: sentimentCall,
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                    "Content-Length": lyrics.length
-                },
-                data: sentimentFormData
-            })
-                .then(sRsp => {
+            const sentimentCall = axios(setupSentimentCall(cleanedLyrics));
+            const wordcloudCall = axios(setupWordcloudCall(cleanedLyrics));
+
+            axios.all([sentimentCall, wordcloudCall])
+                .then(axios.spread((...responses) => {  
+                    const sentimentRes = responses[0];
+                    const wordcloudRes = responses[1];
                     const sentiment: Sentiment = {
-                        label: sRsp.data.label,
-                        negative: sRsp.data.probability.neg,
-                        neutral: sRsp.data.probability.neutral,
-                        positive: sRsp.data.probability.pos
-                    }
+                        label: sentimentRes.data.label,
+                        negative: sentimentRes.data.probability.neg,
+                        neutral: sentimentRes.data.probability.neutral,
+                        positive: sentimentRes.data.probability.pos
+                    };
                     const mashupResponse: Lyrics = {
                         lyrics_id: lyricsRes.lyrics_id,
                         track_id: +id,
                         content: lyrics,
                         language: lyricsRes.lyrics_language,
-                        sentiment: sentiment
-                    }
-                    console.log(mashupResponse);
+                        sentiment: sentiment,
+                        wordcloud: wordcloudRes.data
+                    };
                     res.json(mashupResponse);
-                })
+                }))
                 .catch(error => {
                     console.error(error);
                 });
-            //res.json(rsp.data.message.body.lyrics);
         })
         .catch(error => {
             console.error(error);
@@ -83,9 +82,30 @@ router.get('/lyrics', (req, res) => {
 });
 
 function setupSentimentCall(lyrics: string) {
+    const sentimentFormData = new FormData();
+    sentimentFormData.append('text', lyrics);
     const options = createSentimentOptions(lyrics);
     const url = `http://${sentiment.host}${options.path}`;
-    return url;
+    const call = {
+        method: 'post',
+        url: url,
+        headers: {
+            "Content-Type": "multipart/form-data",
+            "Content-Length": lyrics.length
+        },
+        data: sentimentFormData
+    };
+    return call;
+}
+
+function setupWordcloudCall(lyrics: string) {
+    const options = createWordcloudOptions(lyrics);
+    const url = `http://${wordcloud.host}${options.path}`;
+    const call = {
+        method: 'get',
+        url: url
+    };
+    return call;
 }
 
 function createSongSearchOptions(query: any) {
@@ -117,8 +137,21 @@ function createSentimentOptions(lyrics: string) {
     return options;
 }
 
+function createWordcloudOptions(lyrics: string) {
+    const options = {
+        path: "/wordcloud?"
+    };
+    const queryString = `text=${lyrics}&width=400&height=400&removeStopwords=true`
+    options.path += queryString;
+    return options;
+}
+
 function cleanLyrics(lyrics_body: string): string {
     return lyrics_body.replace(/\*{7}(.*)/g, '').replace(/\([0-9]{13}\)/g, '').trim();
+}
+
+function cleanupLineBreaks(lyrics: string): string {
+    return lyrics.replace( /[\n\r]/g, ' ');
 }
 
 export default router;

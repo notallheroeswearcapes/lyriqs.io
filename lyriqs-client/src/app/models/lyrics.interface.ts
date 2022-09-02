@@ -5,5 +5,6 @@ export interface Lyrics {
     lyrics_id: number,
     content: string,
     language: string,
-    sentiment: Sentiment
+    sentiment: Sentiment,
+    wordcloud: string
 }

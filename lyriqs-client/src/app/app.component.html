@@ -73,7 +73,7 @@
           <mat-card-title>{{chosenSong?.title}}</mat-card-title>
           <mat-card-subtitle>{{chosenSong?.artist}}</mat-card-subtitle>
           <span class="spacer"></span>
-          <mat-chip-list>
+          <mat-chip-list [selectable]="false" >
             <mat-chip [ngStyle]="{'background-color': (songLyrics?.sentiment?.label == 'pos') ? posCol : (songLyrics?.sentiment?.label == 'neg') ? negCol : neuCol}">
               <mat-icon>{{sentimentChipIcon}}</mat-icon>
               <span class="spacer-small"></span>
@@ -102,6 +102,7 @@
         <mat-divider inset></mat-divider>
         <div class="sentimentChartContainer">
           <span class="sentChartHeader font-semibold">Lyrics Word Cloud</span>
+          <div class="sentChartHeader" [innerHTML]="songLyrics?.wordcloud! | keepHtml"></div>
         </div>
       </mat-card>
     </div>

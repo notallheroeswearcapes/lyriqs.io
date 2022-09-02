@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Lyrics } from './models/lyrics.interface';
-import { LyriqsService } from './lyriqs.service';
+import { LyriqsService } from './services/lyriqs.service';
 import { Song } from './models/song.interface';
 import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 
@@ -27,15 +27,6 @@ export class AppComponent {
 
   constructor(private lyriqsService: LyriqsService) { }
 
-  getTest() {
-    console.log("Button click event received successfully.")
-    this.lyriqsService.getTest().subscribe(res => {
-      this.result = res;
-    });
-    console.log(this.result);
-    this.counter++;
-  }
-
   searchForSongs() {
     this.songResults = [];
     this.songLyrics = undefined;
@@ -45,6 +36,7 @@ export class AppComponent {
         const element = parsedSongs[property].track;
         const song: Song = {
           id: element.track_id,
+          commontrack_id: element.commontrack_id,
           title: element.track_name,
           artist: element.artist_name,
           album: element.album_name
@@ -56,8 +48,7 @@ export class AppComponent {
 
   fetchSongLyrics(song: Song) {
     this.chosenSong = song;
-    this.lyriqsService.fetchAndAnalyzeSongLyricsById(song.id).subscribe(res => {
-      console.log(res);
+    this.lyriqsService.fetchAndAnalyzeSongLyricsById(song).subscribe(res => {
       this.songLyrics = res;
       this.drawSentimentChart(res);
       this.setLyricsLabelIcon(res);
