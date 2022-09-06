@@ -11,9 +11,7 @@ import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 })
 export class AppComponent {
   displayedColumns: string[] = ['title', 'artist', 'album'];
-  labels = ["Positive", "Negative"]
   query = "";
-  result = ""
   songResults: Song[] = [];
   chosenSong: Song | undefined;
   songLyrics: Lyrics | undefined;
@@ -26,6 +24,12 @@ export class AppComponent {
   sentimentChipColor = ""
 
   constructor(private lyriqsService: LyriqsService) { }
+
+  ngOnInit() {
+    this.lyriqsService.getCounter().subscribe(res => {
+      this.counter = +res;
+    });
+  }
 
   searchForSongs() {
     this.songResults = [];
@@ -57,7 +61,7 @@ export class AppComponent {
 
   drawSentimentChart(lyrics: Lyrics) {
     const sentimentData: ChartData = {
-      labels: this.labels,
+      labels: ["Positive", "Negative"],
       datasets: [{
         label: `${this.chosenSong?.title}`,
         data: [+lyrics.sentiment.positive.toPrecision(3), +lyrics.sentiment.negative.toPrecision(3)],

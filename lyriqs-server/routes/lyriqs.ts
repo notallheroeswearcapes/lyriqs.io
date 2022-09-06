@@ -23,23 +23,25 @@ const wordcloud = {
 }
 
 router.get('/search', (req, res) => {
-    console.log("Received request to /songs/search.");
+    console.log("⚡️ Received request to /songs/search");
     const query = req.query['song'];
     const options = createSongSearchOptions(query);
     const url = `http://${musixmatch.host}${options.path}`;
 
     axios.get(url)
         .then(rsp => {
-            res.json(rsp.data.message.body.track_list);
+            const searchResult = rsp.data.message.body.track_list
+            console.log(`✅ Found ${searchResult.length} tracks`)
+            res.json(searchResult);
         })
         .catch(error => {
-            console.error(error);
+            console.error(`❌ Error during request to /songs/search: ${error}`);
         });
 });
 
 router.get('/lyrics', (req, res) => {
+    console.log("⚡️ Received request to /lyrics");
     const id = req.query['id']!;
-    const commontrack_id = req.query['commontrack_id'];
     const options = createLyricsOptions(id);
     const url = `http://${musixmatch.host}${options.path}`;
 
@@ -70,14 +72,15 @@ router.get('/lyrics', (req, res) => {
                         sentiment: sentiment,
                         wordcloud: wordcloudRes.data
                     };
+                    console.log(`✅ Created mashup response containing lyrics, sentiment values, and a wordcloud image`)
                     res.json(mashupResponse);
                 }))
                 .catch(error => {
-                    console.error(error);
+                    console.error(`❌ Error during request to retrieve sentiments or wordcloud: ${error}`);
                 });
         })
         .catch(error => {
-            console.error(error);
+            console.error(`❌ Error during request to retrieve lyrics, sentiments or wordcloud: ${error}`);
         });
 });
 

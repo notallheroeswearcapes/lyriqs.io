@@ -11,12 +11,12 @@ export class LyriqsService {
 
   constructor(private http: HttpClient) { }
 
-  rootUrl = '/api';
+  counterUrl = '/counter';
   songsUrl = '/songs/search'
   lyricsUrl = '/songs/lyrics'
 
-  getTest(): Observable<string> {
-    return this.http.get(this.rootUrl, { responseType: 'text' });
+  getCounter(): Observable<string> {
+    return this.http.get(this.counterUrl, { responseType: 'text' });
   }
 
   searchForSongByQuery(query: string) {
