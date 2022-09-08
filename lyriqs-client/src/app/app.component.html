@@ -14,6 +14,9 @@
     <span>Counter: {{counter}}</span>
   </mat-toolbar>
 
+  <mat-progress-bar mode="indeterminate" *ngIf="lyriqsService.isLoading$ | async"></mat-progress-bar>
+
+
   <div class="song-search-parent">
     <mat-form-field class="song-search-field" appearance="fill">
       <mat-label>Song search</mat-label>
@@ -25,6 +28,13 @@
     <div class="song-search-button">
       <button mat-raised-button id="searchBtn" color="primary" class="align-middle" (click)="searchForSongs()"
         [disabled]="query==''">Search</button>
+    </div>
+  </div>
+
+  <div class="no-search-results-container" *ngIf="songResults.length == 0">
+    <div class="no-search-results text-lg">
+      <img src="../assets/lyriqs_pink_trp.png">
+      <span>There are no search results available at the moment.</span>
     </div>
   </div>
 
@@ -73,8 +83,9 @@
           <mat-card-title>{{chosenSong?.title}}</mat-card-title>
           <mat-card-subtitle>{{chosenSong?.artist}}</mat-card-subtitle>
           <span class="spacer"></span>
-          <mat-chip-list [selectable]="false" >
-            <mat-chip [ngStyle]="{'background-color': (songLyrics?.sentiment?.label == 'pos') ? posCol : (songLyrics?.sentiment?.label == 'neg') ? negCol : neuCol}">
+          <mat-chip-list [selectable]="false">
+            <mat-chip
+              [ngStyle]="{'background-color': (songLyrics?.sentiment?.label == 'pos') ? posCol : (songLyrics?.sentiment?.label == 'neg') ? negCol : neuCol}">
               <mat-icon>{{sentimentChipIcon}}</mat-icon>
               <span class="spacer-small"></span>
               {{sentimentChipLabel}}
@@ -96,7 +107,9 @@
           </div>
           <span class="spacer-small"></span>
           <div class="song-res-table-info">
-            Positive and negative sentiments will add up to 1, while neutral is standalone. If neutral is greater than 0.5 then the label will be neutral. Otherwise, the label will be positive or negative, whichever has the greater probability.
+            Positive and negative sentiments will add up to 1, while neutral is standalone. If neutral is greater than
+            0.5 then the label will be neutral. Otherwise, the label will be positive or negative, whichever has the
+            greater probability.
           </div>
         </div>
         <mat-divider inset></mat-divider>

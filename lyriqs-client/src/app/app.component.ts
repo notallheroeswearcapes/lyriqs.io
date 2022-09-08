@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Lyrics } from './models/lyrics.interface';
 import { LyriqsService } from './services/lyriqs.service';
 import { Song } from './models/song.interface';
@@ -7,6 +7,7 @@ import { Chart, ChartConfiguration, ChartData } from 'chart.js';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
@@ -23,7 +24,7 @@ export class AppComponent {
   sentimentChipIcon = ''
   sentimentChipColor = ""
 
-  constructor(private lyriqsService: LyriqsService) { }
+  constructor(public lyriqsService: LyriqsService) { }
 
   ngOnInit() {
     this.lyriqsService.getCounter().subscribe(res => {

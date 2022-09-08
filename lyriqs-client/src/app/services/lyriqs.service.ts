@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http'
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Lyrics } from '../models/lyrics.interface';
 import { Song } from '../models/song.interface';
 
@@ -9,11 +9,18 @@ import { Song } from '../models/song.interface';
 })
 export class LyriqsService {
 
-  constructor(private http: HttpClient) { }
+  private isLoading$$ = new BehaviorSubject<boolean>(false);
+  isLoading$ = this.isLoading$$.asObservable();
 
   counterUrl = '/counter';
   songsUrl = '/songs/search'
   lyricsUrl = '/songs/lyrics'
+
+  constructor(private http: HttpClient) { }
+
+  setLoading(isLoading: boolean) {
+    this.isLoading$$.next(isLoading);
+  }
 
   getCounter(): Observable<string> {
     return this.http.get(this.counterUrl, { responseType: 'text' });
