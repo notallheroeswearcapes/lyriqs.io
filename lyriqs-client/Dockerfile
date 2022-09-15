@@ -4,9 +4,15 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build --prod
 
 # Stage 2: Run
-FROM nginx:latest
-COPY nginx.conf /etc/nginx/nginx.conf
+FROM nginx:stable-alpine
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+# Copy dist folder from build stage to nginx public folder
 COPY --from=build /usr/src/app/dist/lyriqs-client /usr/share/nginx/html
+# Copy nginx config file
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Expose port
+EXPOSE 80

@@ -1,5 +1,11 @@
 FROM node:16-alpine
 
+# Set basic AWS credentials and API Key variables
+ENV AWS_ACCESS_KEY_ID XXID
+ENV AWS_SECRET_ACCESS_KEY XXSECRET
+ENV AWS_SESSION_TOKEN XXTOKEN
+ENV MUSIXMATCH_API_KEY YYKEY1
+
 # Set the work directory to app folder. 
 # We will be copying our code here
 WORKDIR /lyriqs-server
@@ -19,5 +25,5 @@ RUN npm run build
 # Run the node server with compiled server file
 CMD ["node", "build/server.js"]
 
-# Expose the service over PORT 3000
+# Expose port
 EXPOSE 3000

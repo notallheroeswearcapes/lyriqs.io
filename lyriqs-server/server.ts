@@ -10,8 +10,11 @@ import lyricsRouter from './routes/lyriqs';
 const port = process.env.PORT;
 app.use(cors());
 
+AWS.config.update({
+    region: process.env.REGION
+});
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-const s3BucketName = "cab432-n11378093-lyriqs";
+const s3BucketName = process.env.S3_BUCKET_NAME!;
 const s3KeyName = "page_counter.json";
 const s3Body = { counter: 0 }
 const s3Params = {
@@ -30,7 +33,7 @@ app.get('/counter', (_, res) => {
     s3Body.counter++;
     s3Params.Body = JSON.stringify(s3Body);
     setCounter();
-    res.send(`${s3Body.counter}`)
+    res.send(`${s3Body.counter}`);
 });
 
 app.use('/songs?', lyricsRouter);

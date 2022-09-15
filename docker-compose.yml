@@ -1,10 +1,19 @@
-version: '1.0'
+version: '2.2'
 services:
   server:
     build: ./lyriqs-server
+    container_name: server
+    image: meder96/lyriqs:server
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SESSION_TOKEN
+      - MUSIXMATCH_API_KEY
     ports:
-      - "8000:3000"
+      - "3000:3000"
   client:
     build: ./lyriqs-client
-    ports:
+    container_name: client
+    image: meder96/lyriqs:client
+    ports: 
       - "4200:80"
