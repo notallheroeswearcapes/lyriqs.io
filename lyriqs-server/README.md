@@ -6,27 +6,34 @@ This is the server side project for `lyriqs.io` - my mashup for the first assign
 The server is written using [TypeScript](https://www.typescriptlang.org/) and consists of a basic [Express](https://expressjs.com/en/starter/installing.html) backend served on a [Node.js](https://nodejs.org/en/) server. The API of the server exposes three endpoints: `/counter`, `/songs/search`, and `/songs/lyrics`.
 
 1. `/counter`
+
 A GET call to this endpoint returns the number of page views with regard to a page counter hosted on AWS S3. The raw number of the page views is returned as text.
 
 2. `/songs/search`
+
 A GET call to this endpoint returns a list of search results for a specific search term supplied as a query parameter `song`. A full request would look like `/songs/search?song=Yesterday`. The server sends a request to the song search endpoint of the Musixmatch API to retrieve the results and then returns the track list as a JSON. The list contains obects of type `track` from Musixmatch (details can be found at the [API documentation](https://developer.musixmatch.com/documentation/api-reference/track)).
 
 3. `/songs/lyrics`
+
 This is the actual mashup endpoint. A GET call with query parameter `id`, which contains the `track_id` of a Musixmatch song entry, will perform several API calls from the server and compile a mashup response object that is returned once all internal calls have concluded. First, the lyrics for the track ID are fetched from Musixmatch. The lyrics are then cleaned and used as the input to calls to the text-processing.com and Quickchart APIs which perform the sentiment analysis and wordcloud generation, respectively. The mashup response is an object of type `models/lyrics.interface.ts`. A full request to the mashup endpoint would look like `/songs/lyrics?id=15953433`.
 
 ## APIs
 The mashup uses three different APIs to collect data according to the user's requests. Additionally, a page view counter is implemented using an AWS S3 bucket.
 
 1. Musixmatch
+
 The [Musixmatch API](https://developer.musixmatch.com/documentation/api-methods) at `http://api.musixmatch.com/ws/1.1` is used to search for songs and then fetch their lyrics. An API key is required to use this service which needs to be supplied explicitly before starting the server (see section *How to use*). The free plan allows you to return 10 songs for a search request and provides 30% of a song's lyrics. As this is not a full production service, this limitation is deemed acceptable. The endpoints from Musixmatch are GET to `/track.search?` for the song search and GET to `/track.lyrics.get?` for fetching the lyrics for a specific song.
 
 2. text-processing.com
+
 This [text-processing.com API](http://text-processing.com/docs/index.html) at `http://text-processing.com/api` is a simple JSON over HTTP web service for text mining and natural language processing similar to the natural language toolkit (NLTK). It is currently free and open for public use without authentication, but limited to 1k calls per IP per day. The API is used to analyse the sentiment of song lyrics and return the positive/negative/neutral shares of the lyrics content. Before supplying the content to the analysis, the lyrics are cleaned (copyright statement and line breaks are removed). The only endpoint used is POST to `/sentiment`.
 
 3. Quickchart
+
 The [Quickchart API](https://quickchart.io/documentation/) at `http://quickchart.io` is an open-source web service creating charts from Chart.js on a backend and returning them as an image. It also offers an endpoint to create a wordcloud by sending a POST request to `/wordcloud`. The lyrics are supplied as a parameter to this call and the result is a full HTML `<svg>` tag with the wordlcoud as an SVG image ready to be displayed on a web page.
 
 4. AWS S3
+
 A bucket on [AWS S3](https://aws.amazon.com/s3/) contains a JSON file `page_counter.json` with a counter entry that is updated on each visit to the site. Each reload of the client sends a request to the server on the endpoint `/counter`. If the bucket does not exist yet it is created using the provided AWS credentials (see section *How to use*). If the counter object does not exist on startup it is also created with the first request and initialized with the counter set to 0. The name of the S3 bucket can be redefined in the `.env` file or as an environment variable in the `docker run` command. It is set to `cab432-n11378093-lyriqs` as default. 
 
 

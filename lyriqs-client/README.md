@@ -12,9 +12,9 @@ The app consists of a single, default `AppComponent`. It was not necessary to di
 A single service called `LyriqsService` is responsible for performing HTTP calls to the server API. It is injected into the `AppComponent`.
 
 ### Models
-* Song: Consists of the song data like title, artist, etc.
-* Sentiment: Contains the results of the sentiment analyis.
-* Lyrics: The model for the mashup response. Contains the lyrics, sentiment results and wordcloud data.
+* `Song`: Consists of the song data like title, artist, etc.
+* `Sentiment`: Contains the results of the sentiment analyis.
+* `Lyrics`: The model for the mashup response. Contains the lyrics, sentiment results and wordcloud data.
 
 ### Charts
 The charts are created with the open-source Javascript library [Chart.js](https://www.chartjs.org/docs/2.9.4/) in version 2.9.4. The charts are created in the frontend based on the results of the sentiment analysis.
